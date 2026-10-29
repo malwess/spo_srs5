@@ -1,0 +1,55 @@
+{# Боковое меню: на компьютере слева, на планшете и телефоне — верхняя полоса с кнопкой #}
+<aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+    <div class="container-fluid">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
+                aria-controls="sidebar-menu" aria-expanded="false" aria-label="Открыть меню">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-brand navbar-brand-autodark">
+            <a href="{% url 'dashboard' %}" class="brand-link">
+                <span class="brand-mark"><i class="ti ti-calendar-check"></i></span>
+                <span class="brand-text">Планировщик</span>
+            </a>
+        </div>
+
+        <!-- Кнопки, которые на телефоне остаются в верхней полосе -->
+        <div class="navbar-nav flex-row d-lg-none">
+            <button type="button" class="btn btn-icon btn-ghost-light js-theme-toggle" aria-label="Сменить тему">
+                <i class="ti ti-moon hide-theme-dark"></i><i class="ti ti-sun hide-theme-light"></i>
+            </button>
+        </div>
+
+        <nav class="collapse navbar-collapse" id="sidebar-menu" aria-label="Главное меню">
+            <ul class="navbar-nav pt-lg-3">
+                {% url 'dashboard' as url %}
+                {% include 'partials/_nav_item.html' with url=url icon='layout-dashboard' title='Главная' exact=True %}
+                {% url 'board' as url %}
+                {% include 'partials/_nav_item.html' with url=url icon='layout-kanban' title='Доска' counter='doing' badge=counters.doing badge_color='orange' exact=True %}
+                {% url 'task_list' as url %}
+                {% include 'partials/_nav_item.html' with url=url icon='list-check' title='Задания' counter='overdue' badge=counters.overdue badge_color='red' %}
+                {% url 'subject_list' as url %}
+                {% include 'partials/_nav_item.html' with url=url icon='books' title='Дисциплины' %}
+            </ul>
+
+            <!-- Нижняя часть меню (на компьютере прижата к низу) -->
+            <div class="navbar-side d-none d-lg-block">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">
+                            <span class="nav-link-icon"><i class="ti ti-settings"></i></span>
+                            <span class="nav-link-title">Админка</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" id="sidebar-fold" aria-label="Свернуть меню">
+                            <span class="nav-link-icon"><i class="ti ti-layout-sidebar-left-collapse"></i></span>
+                            <span class="nav-link-title">Свернуть меню</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</aside>

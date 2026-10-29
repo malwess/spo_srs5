@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Задания · {{ block.super }}{% endblock %}
+{% block pretitle %}Список{% endblock %}
+{% block page_title %}Задания{% endblock %}
+{% block page_actions %}{% include 'partials/_add_button.html' %}{% endblock %}
+
+{% block content %}
+<div class="card">
+
+    <!-- Панель фильтров: значения сохраняются в браузере и применяются через fetch -->
+    <div class="card-body border-bottom">
+        <form class="row g-2 align-items-center" id="task-filters" autocomplete="off">
+            <div class="col-12 col-md-4 col-lg-5">
+                <div class="input-icon">
+                    <span class="input-icon-addon"><i class="ti ti-search"></i></span>
+                    <input type="search" class="form-control" name="q" placeholder="Поиск по названию…">
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <select class="form-select" name="subject" aria-label="Дисциплина">
+                    <option value="">Все дисциплины</option>
+                    {% for subject in subjects %}<option value="{{ subject.pk }}">{{ subject.short_name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <select class="form-select" name="status" aria-label="Статус">
+                    <option value="">Все статусы</option>
+                    {% for code, title in statuses %}<option value="{{ code }}">{{ title }}</option>{% endfor %}
+                    <option value="overdue">Просрочено</option>
+                </select>
+            </div>
+            <div class="col-md-2 col-lg-2 d-none d-md-flex justify-content-end">
+                <!-- Переключатель вида: таблица / карточки -->
+                <div class="btn-group" role="group" aria-label="Вид списка" id="view-switch">
+                    <button type="button" class="btn btn-icon" data-view="table" data-bs-toggle="tooltip" title="Таблица">
+                        <i class="ti ti-table"></i>
+                    </button>
+                    <button type="button" class="btn btn-icon" data-view="tiles" data-bs-toggle="tooltip" title="Карточки">
+                        <i class="ti ti-layout-grid"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card-header py-2">
+        <span class="text-secondary">Найдено: <strong id="found-count">{{ tasks|length }}</strong></span>
+        <div class="card-actions">
+            <button type="button" class="btn btn-sm btn-ghost-secondary" id="reset-filters">
+                <i class="ti ti-filter-off me-1"></i>Сбросить
+            </button>
+        </div>
+    </div>
+
+    <div class="tasks-view position-relative" id="tasks-view" data-view="table">
+        <div class="loading-overlay" id="tasks-loading"><div class="spinner-border text-primary"></div></div>
+
+        <!-- Вид «таблица» -->
+        <div class="table-responsive view-table">
+            <table class="table table-vcenter card-table">
+                <thead>
+                    <tr>
+                        <th class="w-1"></th>
+                        <th>Задание</th>
+                        <th class="d-none d-sm-table-cell">Дисциплина</th>
+                        <th class="d-none d-lg-table-cell">Срок</th>
+                        <th class="d-none d-xl-table-cell">Чек-лист</th>
+                        <th class="d-none d-md-table-cell">Статус</th>
+                        <th class="w-1"></th>
+                    </tr>
+                </thead>
+                <tbody id="task-rows">
+                    {% include 'partials/_task_rows.html' %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Вид «карточки» -->
+        <div class="card-body view-tiles">
+            <div class="row row-cards" id="task-tiles">
+                {% include 'partials/_task_tiles.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}{% include 'partials/_task_modal.html' %}{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/task_modal.js' %}"></script>
+<script src="{% static 'js/task_list.js' %}"></script>
+{% endblock %}

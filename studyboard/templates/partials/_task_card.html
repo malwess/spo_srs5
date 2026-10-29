@@ -1,0 +1,27 @@
+{% load planner_tags %}
+{# Карточка задания на канбан-доске. draggable — для перетаскивания мышью #}
+<div class="card card-sm task-card {% if task.is_overdue %}task-overdue{% endif %}" draggable="true"
+     data-id="{{ task.pk }}" data-subject="{{ task.subject_id }}" data-status="{{ task.status }}">
+    <div class="card-status-start bg-{{ task.subject.color }}"></div>
+    <div class="card-body">
+        <div class="d-flex align-items-start gap-2">
+            <div class="flex-fill">
+                <div class="d-flex align-items-center gap-1 mb-1">
+                    {% include 'partials/_subject_badge.html' with subject=task.subject %}
+                    <span class="text-secondary small fw-medium">{{ task.code }}</span>
+                    {% if task.priority == 3 %}<i class="ti ti-flame text-red" title="Высокий приоритет"></i>{% endif %}
+                </div>
+                <a href="{% url 'task_detail' task.pk %}" class="task-title text-reset">{{ task.title }}</a>
+            </div>
+            {% include 'partials/_status_menu.html' %}
+        </div>
+        <div class="d-flex align-items-center justify-content-between mt-2 gap-2">
+            {% include 'partials/_deadline.html' %}
+            {% with progress=task.checklist_progress %}
+                <span class="small text-secondary text-nowrap" title="Чек-лист">
+                    <i class="ti ti-checkbox"></i> {{ progress }}%
+                </span>
+            {% endwith %}
+        </div>
+    </div>
+</div>

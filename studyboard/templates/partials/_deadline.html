@@ -1,0 +1,4 @@
+{% load planner_tags %}
+<span class="badge bg-{{ task|deadline_color }}-lt text-nowrap" title="Срок: {{ task.deadline|date:'d.m.Y' }}">
+    <i class="ti ti-clock me-1"></i>{{ task.deadline|date:'d.m' }} · {{ task|deadline_text }}
+</span>

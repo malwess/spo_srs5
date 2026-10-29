@@ -1,0 +1,4 @@
+{# Поле формы в оформлении Tabler. Ошибка подставляется из JavaScript #}
+<label class="form-label {% if field.field.required %}required{% endif %}" for="{{ field.id_for_label }}">{{ field.label }}</label>
+{{ field }}
+<div class="invalid-feedback" data-error-for="{{ field.html_name }}"></div>

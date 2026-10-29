@@ -1,0 +1,5 @@
+{% for task in tasks %}
+    {% include 'partials/_task_row.html' %}
+{% empty %}
+    <tr class="js-empty"><td colspan="7">{% include 'partials/_empty.html' with text='Нет заданий по выбранным условиям' %}</td></tr>
+{% endfor %}

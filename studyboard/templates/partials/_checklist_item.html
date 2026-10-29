@@ -1,0 +1,5 @@
+<label class="list-group-item d-flex align-items-center gap-2 checklist-item {% if item.done %}is-done{% endif %}">
+    <input class="form-check-input m-0 js-check" type="checkbox" data-id="{{ item.pk }}"
+           {% if item.done %}checked{% endif %}>
+    <span class="checklist-text">{{ item.text }}</span>
+</label>

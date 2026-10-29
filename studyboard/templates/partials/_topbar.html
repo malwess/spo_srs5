@@ -1,0 +1,21 @@
+{# Верхняя панель — только на широких экранах (d-none d-lg-flex) #}
+<header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
+    <div class="container-xl">
+        <div class="d-flex align-items-center gap-2 text-secondary">
+            <i class="ti ti-calendar"></i>
+            <span id="today-label"></span>
+        </div>
+        <div class="navbar-nav flex-row order-md-last ms-auto align-items-center gap-2">
+            <span class="badge bg-red-lt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Просроченные задания">
+                <i class="ti ti-alarm me-1"></i><span data-counter="overdue">{{ counters.overdue }}</span>
+            </span>
+            <span class="badge bg-orange-lt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Задания в работе">
+                <i class="ti ti-progress me-1"></i><span data-counter="doing">{{ counters.doing }}</span>
+            </span>
+            <button type="button" class="btn btn-icon btn-ghost-secondary js-theme-toggle"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Светлая / тёмная тема">
+                <i class="ti ti-moon hide-theme-dark fs-2"></i><i class="ti ti-sun hide-theme-light fs-2"></i>
+            </button>
+        </div>
+    </div>
+</header>

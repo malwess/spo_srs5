@@ -1,0 +1,22 @@
+{% load planner_tags %}
+{# Строка таблицы заданий #}
+<tr data-id="{{ task.pk }}" class="{% if task.status == 'done' %}row-done{% endif %}">
+    <td class="w-1">
+        <input class="form-check-input m-0 js-done-toggle" type="checkbox" data-id="{{ task.pk }}"
+               {% if task.status == 'done' %}checked{% endif %} aria-label="Сдано">
+    </td>
+    <td>
+        <a href="{% url 'task_detail' task.pk %}" class="text-reset fw-medium">{{ task.title }}</a>
+        <div class="text-secondary small">{{ task.code }}</div>
+    </td>
+    <td class="d-none d-sm-table-cell">{% include 'partials/_subject_badge.html' with subject=task.subject %}</td>
+    <td class="d-none d-lg-table-cell">{% include 'partials/_deadline.html' %}</td>
+    <td class="d-none d-xl-table-cell" style="min-width: 110px">
+        {% progress_bar task.checklist_progress task.status|status_color %}
+    </td>
+    <td class="text-nowrap d-none d-md-table-cell">
+        <span class="status-dot status-{{ task.status|status_color }} me-1"></span>
+        <span class="js-status-label">{{ task.get_status_display }}</span>
+    </td>
+    <td class="w-1">{% include 'partials/_status_menu.html' %}</td>
+</tr>

@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru" data-bs-navbar-position="combined">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}Учебный планировщик{% endblock %}</title>
+
+    <!-- Восстановление темы и свёрнутого меню до отрисовки страницы (без мигания) -->
+    <script>
+        try {
+            if (JSON.parse(localStorage.getItem('planner.theme')) === 'dark') {
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+            }
+            if (JSON.parse(localStorage.getItem('planner.sidebarFolded')) === true) {
+                document.documentElement.setAttribute('data-bs-sidebar', 'folded');
+            }
+        } catch (e) {}
+    </script>
+
+    <link rel="stylesheet" href="{% static 'vendor/tabler/css/tabler.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/tabler-icons/tabler-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/planner.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+<div class="page">
+
+    {% include 'partials/_sidebar.html' %}
+    {% include 'partials/_topbar.html' %}
+
+    <div class="page-wrapper">
+
+        <!-- Заголовок страницы: наполняется блоками дочерних шаблонов -->
+        <div class="page-header d-print-none">
+            <div class="container-xl">
+                <div class="row g-2 align-items-center">
+                    <div class="col">
+                        <div class="page-pretitle">{% block pretitle %}Учебный планировщик{% endblock %}</div>
+                        <h2 class="page-title">{% block page_title %}{% endblock %}</h2>
+                    </div>
+                    <div class="col-auto ms-auto d-print-none">
+                        <div class="btn-list">{% block page_actions %}{% endblock %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <div class="container-xl">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+
+        {% include 'partials/_footer.html' %}
+    </div>
+</div>
+
+{% block modals %}{% endblock %}
+
+<!-- Контейнер для всплывающих уведомлений (заполняется из JavaScript) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toasts"></div>
+
+<script src="{% static 'vendor/tabler/js/tabler.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

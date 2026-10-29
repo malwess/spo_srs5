@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static planner_tags %}
+
+{% block title %}{{ task.code }} · {{ block.super }}{% endblock %}
+{% block pretitle %}<a href="{% url 'subject_detail' task.subject_id %}">{{ task.subject.short_name }}</a> · {{ task.code }}{% endblock %}
+{% block page_title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="row row-cards" id="task-detail" data-id="{{ task.pk }}">
+
+    <div class="col-12 col-lg-8">
+        <!-- Компонент: смена статуса -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="form-label">Статус</div>
+                <div class="btn-group w-100 status-switch" role="group" aria-label="Статус задания">
+                    {% for code, title in statuses %}
+                        <button type="button" class="btn {% if task.status == code %}active btn-{{ code|status_color }}{% endif %} js-set-status"
+                                data-id="{{ task.pk }}" data-status="{{ code }}" data-color="{{ code|status_color }}">
+                            <i class="ti {{ code|status_icon }} me-1"></i><span class="d-none d-sm-inline">{{ title }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+                {% if task.description %}
+                    <div class="form-label mt-3">Описание</div>
+                    <p class="mb-0">{{ task.description|linebreaksbr }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Компонент: чек-лист -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Чек-лист</h3>
+                <div class="card-actions"><span class="text-secondary" id="checklist-percent">{{ task.checklist_progress }}%</span></div>
+            </div>
+            <div class="card-body pb-0">
+                <div class="progress progress-sm mb-3">
+                    <div class="progress-bar bg-green" id="checklist-bar" style="width: {{ task.checklist_progress }}%"></div>
+                </div>
+            </div>
+            <div class="list-group list-group-flush" id="checklist">
+                {% for item in task.checklist.all %}
+                    {% include 'partials/_checklist_item.html' %}
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <form class="input-group" id="checklist-form" data-url="{% url 'api_checklist_add' task.pk %}">
+                    <input type="text" class="form-control" name="text" placeholder="Новый пункт, например «Сделать скриншоты»" maxlength="200">
+                    <button class="btn btn-primary" type="submit"><i class="ti ti-plus"></i><span class="d-none d-sm-inline ms-1">Добавить</span></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-5">Дисциплина</dt>
+                    <dd class="col-7">{% include 'partials/_subject_badge.html' with subject=task.subject %}</dd>
+                    <dt class="col-5">Вид работы</dt><dd class="col-7">{{ task.get_kind_display }} № {{ task.number }}</dd>
+                    <dt class="col-5">Срок</dt><dd class="col-7">{{ task.deadline|date:'d E Y' }}</dd>
+                    <dt class="col-5">Осталось</dt><dd class="col-7">{% include 'partials/_deadline.html' %}</dd>
+                    <dt class="col-5">Приоритет</dt><dd class="col-7">{{ task.get_priority_display }}</dd>
+                    <dt class="col-5">Изменено</dt><dd class="col-7">{{ task.updated_at|date:'d.m.Y H:i' }}</dd>
+                </dl>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'board' %}" class="btn w-100"><i class="ti ti-layout-kanban me-1"></i>К доске</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/task_detail.js' %}"></script>
+{% endblock %}

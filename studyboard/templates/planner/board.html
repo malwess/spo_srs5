@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static planner_tags %}
+
+{% block title %}Доска · {{ block.super }}{% endblock %}
+{% block pretitle %}Канбан{% endblock %}
+{% block page_title %}Доска заданий{% endblock %}
+{% block page_actions %}{% include 'partials/_add_button.html' %}{% endblock %}
+
+{% block content %}
+
+<!-- Фильтр по дисциплинам (выбор сохраняется в браузере) -->
+<div class="subject-filter mb-3" id="board-filter">
+    <button type="button" class="btn btn-sm btn-pill active" data-subject="">Все</button>
+    {% for subject in subjects %}
+        <button type="button" class="btn btn-sm btn-pill" data-subject="{{ subject.pk }}">
+            <span class="badge bg-{{ subject.color }} me-1 p-1"></span>{{ subject.short_name }}
+        </button>
+    {% endfor %}
+</div>
+
+<!-- Вкладки колонок — только на телефоне -->
+<ul class="nav nav-segmented w-100 mb-3 d-md-none" id="board-tabs" role="tablist">
+    {% for column in columns %}
+        <li class="nav-item flex-fill">
+            <button type="button" class="nav-link w-100 {% if forloop.first %}active{% endif %}" data-tab="{{ column.status }}">
+                {{ column.title }}
+                <span class="badge bg-{{ column.status|status_color }}-lt ms-1" data-count="{{ column.status }}">{{ column.tasks|length }}</span>
+            </button>
+        </li>
+    {% endfor %}
+</ul>
+
+<div class="board" id="board">
+    {% for column in columns %}
+        <section class="board-column {% if forloop.first %}is-active{% endif %}" data-status="{{ column.status }}">
+            <div class="board-column-header">
+                <span class="status-dot status-{{ column.status|status_color }}"></span>
+                <h3 class="m-0">{{ column.title }}</h3>
+                <span class="badge bg-{{ column.status|status_color }}-lt" data-count="{{ column.status }}">{{ column.tasks|length }}</span>
+                {% if column.status == 'done' %}
+                    <button type="button" class="btn btn-sm btn-ghost-secondary btn-icon ms-auto d-none d-md-inline-flex"
+                            id="toggle-done" data-bs-toggle="tooltip" title="Свернуть колонку">
+                        <i class="ti ti-chevrons-up"></i>
+                    </button>
+                {% endif %}
+            </div>
+            <div class="board-column-body" data-dropzone="{{ column.status }}">
+                {% for task in column.tasks %}
+                    {% include 'partials/_task_card.html' %}
+                {% endfor %}
+                <div class="board-empty">Перетащите задание сюда</div>
+            </div>
+        </section>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block modals %}{% include 'partials/_task_modal.html' %}{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/task_modal.js' %}"></script>
+<script src="{% static 'js/board.js' %}"></script>
+{% endblock %}

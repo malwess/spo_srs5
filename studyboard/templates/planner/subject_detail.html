@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static planner_tags %}
+
+{% block title %}{{ subject.short_name }} · {{ block.super }}{% endblock %}
+{% block pretitle %}<a href="{% url 'subject_list' %}">Дисциплины</a>{% endblock %}
+{% block page_title %}{{ subject.name }}{% endblock %}
+{% block page_actions %}{% include 'partials/_add_button.html' %}{% endblock %}
+
+{% block content %}
+<div class="row row-cards">
+    <div class="col-12 col-lg-4">
+        <div class="card">
+            <div class="card-status-top bg-{{ subject.color }}"></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-5">Сокращение</dt><dd class="col-7">{{ subject.short_name }}</dd>
+                    <dt class="col-5">Преподаватель</dt><dd class="col-7">{{ subject.teacher|default:'не указан' }}</dd>
+                    <dt class="col-5">Контроль</dt><dd class="col-7">{{ subject.get_control_display }}</dd>
+                    <dt class="col-5">Заданий</dt><dd class="col-7">{{ tasks|length }}</dd>
+                </dl>
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Сдано</span><span>{{ subject.progress }}%</span>
+                    </div>
+                    {% progress_bar subject.progress subject.color %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-8">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Задания дисциплины</h3></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead>
+                        <tr>
+                            <th class="w-1"></th><th>Задание</th><th class="d-none d-sm-table-cell">Дисциплина</th>
+                            <th class="d-none d-lg-table-cell">Срок</th><th class="d-none d-xl-table-cell">Чек-лист</th>
+                            <th class="d-none d-md-table-cell">Статус</th><th class="w-1"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-rows" data-subject="{{ subject.pk }}">
+                        {% include 'partials/_task_rows.html' %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}{% include 'partials/_task_modal.html' %}{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/task_modal.js' %}"></script>
+<script src="{% static 'js/task_list.js' %}"></script>
+{% endblock %}

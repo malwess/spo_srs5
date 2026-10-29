@@ -1,0 +1,30 @@
+{# Модальное окно добавления задания. На телефоне открывается на весь экран #}
+<div class="modal modal-blur fade" id="task-modal" tabindex="-1" aria-labelledby="task-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+        <form class="modal-content" id="task-form" action="{% url 'api_task_create' %}" method="post" novalidate>
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="task-modal-title">Новое задание</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">{% include 'partials/_field.html' with field=form.subject %}</div>
+                    <div class="col-7 col-md-3">{% include 'partials/_field.html' with field=form.kind %}</div>
+                    <div class="col-5 col-md-3">{% include 'partials/_field.html' with field=form.number %}</div>
+                    <div class="col-12">{% include 'partials/_field.html' with field=form.title %}</div>
+                    <div class="col-12 col-md-6">{% include 'partials/_field.html' with field=form.deadline %}</div>
+                    <div class="col-12 col-md-6">{% include 'partials/_field.html' with field=form.priority %}</div>
+                    <div class="col-12">{% include 'partials/_field.html' with field=form.description %}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
+                    <i class="ti ti-plus me-1"></i>Добавить
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

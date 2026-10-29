@@ -1,0 +1,11 @@
+{# Пункт бокового меню. Параметры: url, icon, title, exact, counter, badge, badge_color #}
+<li class="nav-item {% if exact %}{% if request.path == url %}active{% endif %}{% elif url in request.path %}active{% endif %}">
+    <a class="nav-link" href="{{ url }}">
+        <span class="nav-link-icon"><i class="ti ti-{{ icon }}"></i></span>
+        <span class="nav-link-title">{{ title }}</span>
+        {% if counter %}
+            <span class="badge bg-{{ badge_color }} text-{{ badge_color }}-fg badge-pill ms-auto nav-badge"
+                  data-counter="{{ counter }}" {% if not badge %}hidden{% endif %}>{{ badge }}</span>
+        {% endif %}
+    </a>
+</li>

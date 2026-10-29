@@ -1,0 +1,108 @@
+/* ===== Собственные стили поверх Tabler ===== */
+
+/* --- Логотип --- */
+.brand-link { display: inline-flex; align-items: center; gap: .6rem; color: inherit; text-decoration: none; }
+.brand-link:hover { text-decoration: none; }
+.brand-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem; border-radius: 8px;
+    background: var(--tblr-primary); color: #fff; font-size: 1.2rem; flex-shrink: 0;
+}
+.brand-text { font-weight: 600; }
+[data-bs-sidebar=folded] .brand-text { display: none; }
+
+/* --- Канбан-доска --- */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+.board.done-collapsed { grid-template-columns: 1fr 1fr 220px; }   /* свёрнутая колонка «Сдано» уже */
+
+.board-column {
+    background: var(--tblr-bg-surface-secondary);
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius-lg);
+    padding: .75rem;
+}
+.board-column-header { display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem; }
+.board-column-header h3 { font-size: .95rem; }
+.board-column-body { display: flex; flex-direction: column; gap: .6rem; min-height: 120px; border-radius: 8px; transition: background .15s; }
+.board-column-body.drag-over { background: var(--tblr-primary-lt); outline: 2px dashed var(--tblr-primary); }
+.board-column.collapsed .board-column-body .task-card { display: none; }
+.board-column.collapsed .board-empty { display: none !important; }
+
+.board-empty {
+    display: none; text-align: center; color: var(--tblr-secondary);
+    border: 1px dashed var(--tblr-border-color); border-radius: 8px; padding: 1.25rem .5rem; font-size: .85rem;
+}
+.board-column-body:not(:has(.task-card:not(.d-none))) .board-empty { display: block; }
+
+.task-card { cursor: grab; transition: box-shadow .15s, transform .15s; }
+.task-card:hover { box-shadow: var(--tblr-box-shadow-card-hover, 0 2px 12px rgba(0, 0, 0, .12)); }
+.task-card.dragging { opacity: .5; transform: rotate(2deg); }
+.task-card .task-title { font-weight: 500; line-height: 1.3; display: block; }
+.task-card .card-body { padding: .75rem .75rem .75rem 1rem; }
+.task-overdue { border-color: var(--tblr-red); }
+
+/* Подсветка элемента, который только что изменился */
+.flash { animation: flash 1.2s ease-out; }
+@keyframes flash { from { box-shadow: 0 0 0 3px var(--tblr-primary); } to { box-shadow: 0 0 0 0 transparent; } }
+
+/* --- Фильтр по дисциплинам (кнопки-«таблетки») --- */
+.subject-filter { display: flex; gap: .4rem; flex-wrap: wrap; }
+.subject-filter .btn.active { background: var(--tblr-primary); color: #fff; border-color: var(--tblr-primary); }
+
+/* --- Список заданий: два вида --- */
+.tasks-view[data-view=table] .view-tiles { display: none; }
+.tasks-view[data-view=tiles] .view-table { display: none; }
+.row-done td { color: var(--tblr-secondary); }
+.row-done a { text-decoration: line-through; }
+.tile-done { opacity: .7; }
+
+.loading-overlay {
+    position: absolute; inset: 0; z-index: 2; display: none;
+    align-items: flex-start; justify-content: center; padding-top: 3rem;
+    background: color-mix(in srgb, var(--tblr-bg-surface) 60%, transparent);
+}
+.loading-overlay.show { display: flex; }
+
+/* --- Чек-лист и ближайшие сроки --- */
+.checklist-item { cursor: pointer; }
+.checklist-item.is-done .checklist-text { text-decoration: line-through; color: var(--tblr-secondary); }
+.upcoming-item { transition: opacity .4s, transform .4s; }
+.upcoming-item.removing { opacity: 0; transform: translateX(30px); }
+.status-chart { min-height: 260px; }
+
+/* Удаление: вторая стадия кнопки */
+.js-delete.confirm { background: var(--tblr-danger); color: #fff !important; }
+
+/* ================= Адаптивность ================= */
+
+/* Планшет (768–991 px): колонки доски прокручиваются по горизонтали с «прилипанием» */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .board, .board.done-collapsed {
+        display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .5rem;
+    }
+    .board-column { flex: 0 0 340px; scroll-snap-align: start; }
+}
+
+/* Телефон (< 768 px): одна колонка доски, переключение вкладками */
+@media (max-width: 767.98px) {
+    .board, .board.done-collapsed { display: block; }
+    .board-column { display: none; padding: .5rem; border: 0; background: transparent; }
+    .board-column.is-active { display: block; }
+    .board-column-header { display: none; }
+    .board-column.collapsed .board-column-body .task-card { display: block; }
+
+    /* На телефоне список заданий всегда показывается карточками */
+    .tasks-view[data-view] .view-table { display: none; }
+    .tasks-view[data-view] .view-tiles { display: block; }
+
+    #board-tabs { flex-wrap: nowrap; }
+    #board-tabs .nav-link { font-size: .8rem; padding: .4rem .3rem; white-space: nowrap; }
+    .subject-filter { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .25rem; }
+    .subject-filter .btn { flex-shrink: 0; }
+    .page-body .container-xl, .page-header .container-xl { padding-left: .75rem; padding-right: .75rem; }
+}

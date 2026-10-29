@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static planner_tags %}
+
+{% block title %}Главная · {{ block.super }}{% endblock %}
+{% block pretitle %}Обзор{% endblock %}
+{% block page_title %}Главная{% endblock %}
+
+{% block content %}
+
+<!-- Компонент 1: карточки-счётчики -->
+<div class="row row-deck row-cards mb-3">
+    <div class="col-6 col-lg-3">
+        {% include 'partials/_stat_card.html' with icon='list' color='primary' value=stats.total label='Всего заданий' counter='total' %}
+    </div>
+    <div class="col-6 col-lg-3">
+        {% include 'partials/_stat_card.html' with icon='progress' color='orange' value=stats.doing label='В работе' counter='doing' %}
+    </div>
+    <div class="col-6 col-lg-3">
+        {% include 'partials/_stat_card.html' with icon='circle-check' color='green' value=stats.done label='Сдано' counter='done' %}
+    </div>
+    <div class="col-6 col-lg-3">
+        {% include 'partials/_stat_card.html' with icon='alarm' color='red' value=stats.overdue label='Просрочено' counter='overdue' %}
+    </div>
+</div>
+
+<div class="row row-cards">
+
+    <!-- Компонент 2: ближайшие сроки с отметкой «Сдано» без перезагрузки -->
+    <div class="col-12 col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <h3 class="card-title">Ближайшие сроки</h3>
+                <div class="card-actions">
+                    <a href="{% url 'task_list' %}" class="btn btn-sm">Все задания<i class="ti ti-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <div class="list-group list-group-flush" id="upcoming">
+                {% for task in upcoming %}
+                    <div class="list-group-item upcoming-item" data-id="{{ task.pk }}">
+                        <div class="row align-items-center g-2">
+                            <div class="col-auto">
+                                <input class="form-check-input js-done-toggle" type="checkbox" data-id="{{ task.pk }}"
+                                       data-bs-toggle="tooltip" title="Отметить сданным">
+                            </div>
+                            <div class="col text-truncate">
+                                <a href="{% url 'task_detail' task.pk %}" class="text-reset d-block text-truncate">{{ task.title }}</a>
+                                <div class="small text-secondary">
+                                    {% include 'partials/_subject_badge.html' with subject=task.subject %} {{ task.code }}
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-auto text-sm-end">{% include 'partials/_deadline.html' %}</div>
+                        </div>
+                    </div>
+                {% empty %}
+                    {% include 'partials/_empty.html' with text='Все задания сданы' %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Компонент 3: диаграмма статусов -->
+    <div class="col-12 col-md-6 col-lg-5">
+        <div class="card h-100">
+            <div class="card-header"><h3 class="card-title">Статусы заданий</h3></div>
+            <div class="card-body">
+                <div id="status-chart" class="status-chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Компонент 4: прогресс по дисциплинам -->
+    <div class="col-12 col-md-6 col-lg-12">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Прогресс по дисциплинам</h3></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for subject in subjects %}
+                        {% with progress=subject.progress %}
+                        <div class="col-12 col-lg-6">
+                            <div class="d-flex justify-content-between mb-1">
+                                <a href="{% url 'subject_detail' subject.pk %}" class="text-reset text-truncate">
+                                    {% include 'partials/_subject_badge.html' %} {{ subject.name }}
+                                </a>
+                                <span class="text-secondary ms-2">{{ progress }}%</span>
+                            </div>
+                            {% progress_bar progress subject.color %}
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ chart|json_script:'chart-data' }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

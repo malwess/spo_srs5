@@ -1,0 +1,31 @@
+{# Выпадающее меню смены статуса. Работает и на телефоне, где нет перетаскивания #}
+<div class="dropdown">
+    <button class="btn btn-sm btn-ghost-secondary btn-icon" type="button" data-bs-toggle="dropdown"
+            data-bs-auto-close="outside"
+            aria-label="Действия с заданием">
+        <i class="ti ti-dots-vertical"></i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end">
+        <span class="dropdown-header">Переместить в</span>
+        <button type="button" class="dropdown-item js-set-status" data-id="{{ task.pk }}" data-status="todo"
+                {% if task.status == 'todo' %}disabled{% endif %}>
+            <i class="ti ti-circle-dashed dropdown-item-icon text-blue"></i>К выполнению
+        </button>
+        <button type="button" class="dropdown-item js-set-status" data-id="{{ task.pk }}" data-status="doing"
+                {% if task.status == 'doing' %}disabled{% endif %}>
+            <i class="ti ti-progress dropdown-item-icon text-orange"></i>В работе
+        </button>
+        <button type="button" class="dropdown-item js-set-status" data-id="{{ task.pk }}" data-status="done"
+                {% if task.status == 'done' %}disabled{% endif %}>
+            <i class="ti ti-circle-check dropdown-item-icon text-green"></i>Сдано
+        </button>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'task_detail' task.pk %}">
+            <i class="ti ti-file-description dropdown-item-icon"></i>Открыть
+        </a>
+        <button type="button" class="dropdown-item text-danger js-delete" data-id="{{ task.pk }}"
+                data-title="{{ task.code }}">
+            <i class="ti ti-trash dropdown-item-icon"></i>Удалить
+        </button>
+    </div>
+</div>
